@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block h1 %}{% if is_edit %} Редактирование товара {% else %} Создание товара {% endif %}{% endblock %}
+{% block title %}{% if is_edit %} Редактирование товара {% else %} Создание товара {% endif %}{% endblock %}
+
+{% block content %}
+{% if user.role.name == "admin" %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit">{% if is_edit %} Изменить {% else %} Создать {% endif %}</button>
+</form>
+{% else %}
+<h1>У вас недостаточно прав</h1>
+{% endif %}
+{% endblock %}
