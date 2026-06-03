@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список заказов - ООО «Магазин»{% endblock %}
+{% block h1 %}Список заказов{% endblock %}
+
+{% block content %}
+<div class="actions-row">
+    <a href="{% url 'product_list' %}" class="btn">Товары</a>
+    {% if user.role.name == "admin" %}
+    <a href="{% url 'order_create' %}" class="btn">Добавить заказ</a>
+    {% endif %}
+</div>
+
+<div class="orders-list">
+    {% for order in orders %}
+    <div class="order-card">
+        <div>
+            <strong>Артикул:</strong>
+            {% if user.role.name == "admin" %}
+            <a href="{% url 'order_update' order.id %}">{{ order.article }}</a>
+            {% else %}
+            {{ order.article }}
+            {% endif %}
+        </div>
+        <div><strong>Статус:</strong> {{ order.status }}</div>
+        <div><strong>Адрес пункта выдачи:</strong> {{ order.pickup_point.address }}</div>
+        <div><strong>Дата заказа:</strong> {{ order.order_date|date:"d.m.Y H:i" }}</div>
+        <div><strong>Дата выдачи:</strong> {{ order.delivery_date|date:"d.m.Y H:i" }}</div>
+
+        {% if user.role.name == "admin" %}
+        <div class="actions-row">
+            <form action="{% url 'order_delete' order.id %}" method="post">
+                <button style="background-color: red;" type="submit">Удалить</button>
+            </form>
+        </div>
+        <div>
+            <a href="{% url 'order_update' order.id%}">Обновить</a>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>Заказы отсутствуют.</p>
+    {% endfor %}
+</div>
+{% endblock %}

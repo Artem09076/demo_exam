@@ -32,14 +32,11 @@
         </div>
 
 
-        {% comment %}
         {% if user.role.name == 'admin' or user.role.name == 'manager' %}
         <div style="margin-left: 10px;">
             <a href="{% url 'order_list' %}" class="btn" style="background-color: #5bc0de;">Заказы</a>
         </div>
         {% endif %}
-        {% endcomment %}
-
 
         {% if user.role.name == 'admin' %}
         <div style="margin-left: auto;">
@@ -49,6 +46,7 @@
     </form>
 
 </div>
+{% endif %}
 <div>
     {% for product in products %}
     <div class="product-card 
@@ -91,6 +89,4 @@
     <p>Товары не найдены.</p>
     {% endfor %}
 </div>
-
-{% endif %}
 {% endblock %}

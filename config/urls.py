@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from core.views import UserLoginView, ProductListView, CreateProduct, UpdateProduct, DeleteProduct
+from core.views import UserLoginView, ProductListView, CreateProduct, UpdateProduct, DeleteProduct, OrderList, OrderCreate, UpdateOrder, DeleteOrder
 from django.contrib.auth.views import LogoutView
 
 
@@ -31,5 +31,9 @@ urlpatterns = [
     path("products/", ProductListView.as_view(), name="product_list"),
     path("product/add/", CreateProduct.as_view(), name="create_product"),
     path('product/<int:pk>/', UpdateProduct.as_view(), name='upadte_product'),
-    path("product/<int:pk>/delete", DeleteProduct.as_view(), name='delete_product')
+    path("product/<int:pk>/delete", DeleteProduct.as_view(), name='delete_product'),
+    path('orders/', OrderList.as_view(), name='order_list'),
+    path('order/create', OrderCreate.as_view(), name='order_create'),
+    path('order/<int:pk>/edit', UpdateOrder.as_view(), name='order_update'),
+    path('order/<int:pk>/delete', DeleteOrder.as_view(), name='order_delete')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

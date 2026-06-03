@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms import ModelForm, ValidationError, CharField
-from .models import *
+from django.forms import ModelForm, ValidationError, CharField, Select, DateInput
+from .models import Product, Supplier, Order, PickupPoint
 
 class LoginForm(AuthenticationForm):
     def __init__(self, request = ..., *args, **kwargs):
@@ -44,3 +44,44 @@ class ProductForm(ModelForm):
         if price <= 0:
             raise ValidationError("Цена должна быть больше 0")
         return price
+
+
+class OrderForm(ModelForm):
+    pickup_address = CharField(label='Адрес пункта выдачи', required=True)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["pickup_address"].initial = self.instance.pickup_point
+    class Meta:
+        model=Order
+        fields=[
+            "status",
+            "pickup_address",
+            "delivery_date",
+            'pickup_code',
+            'client_name',
+            ]
+        labels={
+            'delivery_date': "Дата доставки",
+            "pickup_address": "Пункт выдачи",
+            'client_name': "Имя получателя",
+            'pickup_code': "Код получения",
+            'status': "Статус заказа"
+        }
+        widgets = {
+            "status": Select(choices=[
+                ("Новый", "Новый"), 
+                ("Завершен", "Завершен")
+                ]),
+            "delivery_date": DateInput(attrs={"type": "date-local"})
+
+        }
+    
+    def save(self, commit = True):
+        pu, _ = PickupPoint.objects.get_or_create(address=self.cleaned_data.get("pickup_address").strip())
+
+        instance =  super().save(commit=False)
+        instance.pickup_point = pu
+        if commit:
+            instance.save()
+        return instance

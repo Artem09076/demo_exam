@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.views import LoginView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.db.models import Q
-from .forms import LoginForm, ProductForm
+from .forms import LoginForm, ProductForm, OrderForm
 from .models import *
 from typing import Any
 from django.urls import reverse_lazy
@@ -67,3 +67,33 @@ class DeleteProduct(DeleteView):
     model=Product
     template_name='product_form.html'
     success_url=reverse_lazy("product_list")
+
+class OrderList(ListView):
+    model=Order
+    template_name='order_list.html'
+    context_object_name='orders'
+
+    def get_queryset(self):
+        queryset = Order.objects.all()
+        return queryset
+    
+class OrderCreate(CreateView):
+    model=Order
+    template_name='order_form.html'
+    success_url=reverse_lazy("order_list")
+    form_class=OrderForm
+
+class UpdateOrder(UpdateView):
+    model=Order
+    template_name='order_form.html'
+    success_url=reverse_lazy("order_list")
+    form_class=OrderForm
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_edit"] = True
+        return context
+    
+class DeleteOrder(DeleteView):
+    model=Order
+    template_name='order_form.html'
+    success_url=reverse_lazy("order_list")
